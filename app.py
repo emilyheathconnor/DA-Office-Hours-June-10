@@ -6,6 +6,7 @@ import pandas as pd
 df = pd.read_csv("./Resources/Raw/Raw_Assessments_as_CSV.csv")
 # note "\" is a special character in python, and paths can be affected
 
+
 """ reference columns """
 # columns_names = [
 #     'Person Id', 'First Name', 'Last Name', 'Full Name', 'Active CM?',
@@ -24,24 +25,25 @@ that you would like to keep
 """
 
 """ static column removal - easiest to understand """
-# df.drop('First Name', 1)
-# df.drop('Last Name', 1)
+# df = df.drop('First Name', 1)
+# df = df.drop('Last Name', 1)
 """ etc. 
 Not ideal for programming because it involves a lot of copy paste
 and can lead to replicated errors in the code + hard to debug.
 """
+
 
 """ dynamic column removal - easiest to implement if you understand looping """
 # create a list of the columns you would like to remove
 columns_to_drop = [
     'First Name', 'Last Name', 'Active CM?', 'Ethnicity',
     'School Director', 'Institute Collab ID',
-    'Class/Subject Description', 'Subject Modifier'
+    'Class/Subject Description', 'Subject Modifier', 'Date of Assessment'
 ]
 # write your for loop to iterate over the columns
 # to remove and drop those columns from the dataframe
 for column in columns_to_drop:
-    df.drop(column, 1)
+    df = df.drop(column, 1)
 
 """ rename assessment name column for easier reading
 'Assessment Name for % BA' -> 'Assessment Name'
@@ -69,7 +71,18 @@ assessments_to_keep = [
     'SRI: Scholastic Reading Inventory',
     'STAR Reading (Renaissance)',
     'ACT English'
+    'NWEA Math -Measures of Academic Progress-grades 3-HS'
 ]
 # create new dataframe with only valid assessments
 # this uses the pandas.Dataframe.isin method for the filter value
-df_valid_asmt = df[df['Assessment Name'].isin(assessments_to_keep)]
+# creates a list of indices to keep
+indices = df['Assessment Name'].isin(assessments_to_keep)
+df_valid_asmt = df[indices]
+# df_valid_asmt = df[df['Assessment Name'].isin(assessments_to_keep)] # original way
+
+act_only = df[df['Assessment Name'] == 'ACT English']
+
+"""
+File Output
+"""
+df_valid_asmt.to_csv("./Resources/Raw/Filtered_Assessments_as_CSV.csv")
